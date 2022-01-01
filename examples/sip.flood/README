@@ -1,0 +1,4 @@
+#SIP REGISTER flood
+
+Generate pseudorandom SIP REGISTER packets and send on UDP to PBX
+
