@@ -44,8 +44,8 @@ llull options input_grammar output_folder
 
 * `%var alphanumeric_identifier diapason`
 > Define sort of ephemeral variable, diapason may be empty. Example `%var ARRAY_SIZE 1:255`. If diapason not set then take as min/max value of `%codon`
-> More deep example:
->```
+> Another example:
+```
 %var REGISTER  0:15
 ...
 
@@ -66,7 +66,8 @@ operand: "REG[" REGISTER "]" {* $$=register_content[$1]; *}
 ### Raw code
 
 Raw C code enclosed in `{*` and `*}` brackets and included as is.
->Example:```
+>Example:
+```
 {*
 #include "context_definitions.h"
 *}
@@ -94,13 +95,15 @@ Because names and signatures of functions depends from source grammar we well us
 
 * `typedef uint16_t name__codon_t;` define codon type (in given case for `%codon 16`)
 * `typedef float name__fitness_t;` define fitness type (in given case for `%fitness <float>`)
-* ```typedef struct name__chromosome_t
+* Single chromosome definition:
+```
+typedef struct name__chromosome_t
 {
   size_t len;
   name__fitness_t fitness;
   name__codon_t data[0];
 } name__chromosome_t;
-``` Single chromosome definition
+```
 
 #### Methods
 
