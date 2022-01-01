@@ -1,0 +1,53 @@
+
+%name irisdt
+%init node
+%codon 32
+%fitness <float>
+%var EPHEMERAL 0:1024
+
+%context <irisdt_ctx_t*>
+
+
+%{
+#include "../macros.h"
+#include "../context.h"
+#include "irisdt.h"
+
+%}
+
+%%
+
+  node <const char*> :	"return " verdict			%{ $$ = $1$; %}
+  |	"if( " bool " ) then { " node " } else { " node " }"	%{ $$ = $1$ ? $2$ : $3$; %}
+;
+
+  verdict<const char*>:	"\"Iris Setosa\""			%{ $$="Iris Setosa"; %}
+  |			"\"Iris Versicolour\""			%{ $$="Iris Versicolour"; %}
+  |			"\"Iris Virginica\""			%{ $$="Iris Virginica"; %}
+;
+
+
+  attribute<float>:	"petal_width"			@attr_pw
+  |			"petal_length"			@attr_pl
+  |			"sepal_width"			@attr_sw
+  |			"sepal_length"			@attr_sl
+;
+
+
+  bool<uint8_t>:	"not(" bool ")"			%{ $$=!$1$; %}
+  |		"and(" bool "," bool ")"		%{ $$=$1$ && $2$; %}
+  |		"or(" bool "," bool ")"			%{ $$= $1$ || $2$; %}
+  |	"if(" bool ") then {" bool "} else {" bool "}"	%{ $$= $1$ ? $2$ : $3$; %}
+  |		"(" dbl ">" dbl ")"			%{ $$= $1$ > $2$; %}
+;
+
+  dbl<float>:		attribute			%{ $$= $1$; %}
+  |			"(" dbl "*" dbl ")"		%{ $$= $1$ * $2$; %}
+  |			"(" dbl "/" dbl ")"		%{ $$= fabs($2$)>1e-8 ? $1$ / $2$: 0; %}
+  |			"(" dbl "+" dbl ")"		%{ $$=$1$ + $2$; %}
+  |			"(" dbl "-" dbl ")"		%{ $$= $1$ - $2$; %}
+  |	"if" "(" bool ") then {" dbl "} else {" dbl "}"	%{ $$= $1$ ? $2$ : $3$; %}
+  |			"ephemeral[ " EPHEMERAL " ]"		@var
+;
+
+%%

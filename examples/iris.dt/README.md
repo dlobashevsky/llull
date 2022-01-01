@@ -1,3 +1,3 @@
-# Fisher Iris data example
+# Fisher Iris data example, decision tree classifier
 
 

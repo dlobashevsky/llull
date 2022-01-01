@@ -3,10 +3,10 @@ Static sentence generator in C with yacc-like syntax
 
 Part of Grammatical Evolution engine (Hegel - https://github.com/dlobashevsky/hegel.git), also useful in fuzzer, generating QA sequences etc.
 
-## Conceptions
-Production grammar described in yacc-style manner with direct including parts of C code
+## Conception
+Production grammar described in yacc-style manner with direct including parts of C code.
 
-## Use
+## Invocation
 llull options input_grammar output_folder
 
 ### Options
