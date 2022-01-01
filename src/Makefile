@@ -3,7 +3,7 @@ CFLAGS=-ggdb3 -Wall -Wno-parentheses -std=gnu11 -D_GNU_SOURCE
 LDFLAGS=-luuid -lm
 PROGRAM=llull
 
-.PHONY install clean all
+.PHONY: install clean all
 
 all:	$(PROGRAM)
 

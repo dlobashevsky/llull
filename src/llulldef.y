@@ -35,7 +35,7 @@ extern int yylex(void);
 /* declare tokens */
 %token <n> TOKEN_NUMBER
 %token <s> TOKEN_ID TOKEN_STRING FREE_CODE TOKEN_CTYPE
-%token TOKEN_INIT TOKEN_NAME  TOKEN_VAR  TOKEN_UUID  TOKEN_CONTEXT  TOKEN_BLOCK TOKEN_CODON TOKEN_FITNESS TOKEN_RNG
+%token TOKEN_INIT TOKEN_NAME  TOKEN_VAR  TOKEN_UUID  TOKEN_CONTEXT  TOKEN_BLOCK TOKEN_CODON TOKEN_FITNESS
 %token TOKEN_EOF TOKEN_SEMICOLON TOKEN_RULE  TOKEN_VARIANT  TOKEN_AT TOKEN_SBRA TOKEN_SKET
 
 %type <s> mult
@@ -65,10 +65,6 @@ prefix_directive:	TOKEN_NAME TOKEN_ID		{  if(grammar_set_name(grammar,$2)) crash
 |			TOKEN_CODON TOKEN_NUMBER	{  if(grammar_set_codon(grammar,$2)) crash("%%codon double definition"); }
 |			TOKEN_FITNESS TOKEN_CTYPE	{  if(grammar_set_fitness(grammar,$2)) crash("%%fitness double definition"); md_free($2); }
 |			TOKEN_VAR TOKEN_ID mod		{  if(grammar_add_var2(grammar,$2,$3)) crash0("%%var double definition <%s>",$2); md_free($2); }
-|			TOKEN_RNG TOKEN_CTYPE		{  grammar_add_rng(grammar,$2,0); md_free($2); }
-|			TOKEN_RNG TOKEN_CTYPE TOKEN_CTYPE	{
-								 grammar_add_rng(grammar,$2,$3); md_free($2); md_free($3);
-								}
 |			FREE_CODE 			{  grammar_add_code(grammar,$1); md_free($1); }
 ;
 

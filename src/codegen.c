@@ -325,7 +325,7 @@ int grammar_codegen(grammar_t* g,const char* out,uint32_t flags)
              "  %1$s__codon_t* vars_max;\n  double* vars_mdl;\n  uint32_t wrap;\n  const struct %1$s__def_seq_t* seq;\n"
              "  const struct %1$s__def_rule_t* rules;\n} %1$s__t;\n\n"
              "//! %1$s chromosome constructor, all positions are zeroed\n%1$s__chromosome_t* %1$s__chromosome_init0(const %1$s__t*,size_t sz);\n"
-             "//! %1$s chromosome constructor, filled by random data, rng safe to NULL\n%1$s__chromosome_t* %1$s__chromosome_init(const %1$s__t*,size_t sz%3$s%4$s,uint32_t (*rng)(void*),void* rng_state);\n"
+             "//! %1$s chromosome constructor, filled by random data, rng safe to NULL\n%1$s__chromosome_t* %1$s__chromosome_init(const %1$s__t*,size_t sz,uint32_t (*rng)(void*),void* rng_state);\n"
              "//! %1$s chromosome destructor\nvoid %1$s__chromosome_free(%1$s__chromosome_t*);\n\n"
              "//! return 0 if chromosome may be successfully parsed, wrap_count should be>0\n"
              "int %1$s__chromosome_check(const %1$s__t*,const %1$s__chromosome_t*);\n\n"
@@ -356,7 +356,7 @@ int grammar_codegen(grammar_t* g,const char* out,uint32_t flags)
              "//! deserialize %1$s definition\n%1$s__t* %1$s__load(FILE*);\n\n"
              "//! get uuid\nconst char* %1$s__sys_uuid(void);\n"
              "//! get name\nconst char* %1$s__sys_name(void);\n\n",
-             g->name,g->context,g->rng_ctx ? "," : "",g->rng_ctx ?: "");
+             g->name,g->context);
 
   fclose(fh);
 
@@ -446,7 +446,7 @@ int grammar_codegen(grammar_t* g,const char* out,uint32_t flags)
 
     for(grammar_case_t* c=rules->cases;c;c=c->next)
       fprintf(fc,"  {%4$zu,%1$s__chromosome_check__%2$s__%3$zu,%1$s__chromosome_dump__%2$s__%3$zu,%1$s__chromosome_bits__%2$s__%3$zu,"
-                 "%1$s__chromosome_val__%2$s__%3$zu,{%5$u,%6$u}},\n",
+                 "%1$s__chromosome_val__%2$s__%3$zu,{%5$d,%6$d}},\n",
                   g->name,rules->name,c->order+1,c->args_count,c->depth[0],c->depth[1]);
   }
 

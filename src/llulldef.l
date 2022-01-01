@@ -87,7 +87,6 @@ static grammar_string_t* global_string=0;
 ^%uuid			{  yylval.s=yytext;return TOKEN_UUID; }
 ^%context		{  yylval.s=yytext;return TOKEN_CONTEXT; }
 ^%fitness		{  yylval.s=yytext;return TOKEN_FITNESS; }
-^%random		{  yylval.s=yytext;return TOKEN_RNG; }
 
 ^%%			{  return TOKEN_BLOCK; }
 

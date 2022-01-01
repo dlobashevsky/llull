@@ -49,8 +49,6 @@ void grammar_free(grammar_t* g)
   md_free(g->context);
   md_free(g->codon);
   md_free(g->fitness);
-  md_free(g->rng);
-  md_free(g->rng_ctx);
 
   grammar_string_free(g->code);
 
@@ -174,15 +172,6 @@ int grammar_set_codon(grammar_t* g,unsigned bytes)
   return 0;
 }
 
-
-int grammar_add_rng(grammar_t* g,const char* func,const char* ctx)
-{
-  md_free(g->rng);
-  md_free(g->rng_ctx);
-  g->rng=typedup(func);
-  g->rng_ctx= ctx ? typedup(ctx) : 0;
-  return 0;
-}
 
 int grammar_add_var(grammar_t* g,const char* name,intmax_t min,intmax_t max)
 {

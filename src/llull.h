@@ -108,9 +108,6 @@ typedef struct grammar_t
   char* codon;
   char* fitness;
 
-  char* rng;
-  char* rng_ctx;
-
   size_t rules_cnt;
   grammar_string_t* code;
   grammar_var_hash_t* vars;
