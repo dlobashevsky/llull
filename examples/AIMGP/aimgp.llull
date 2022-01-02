@@ -7,7 +7,7 @@
 // count of registers
 %var REGNO  8
 %var EPHEMERAL
-%var LENGTH 4:64
+%var LENGTH 64:128
 
 %context <aimgp_ctx_t*>
 

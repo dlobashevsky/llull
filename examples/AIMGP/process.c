@@ -70,7 +70,8 @@ aimgp__fitness_t fitness(aimgp__t* def,aimgp__chromosome_t* c,aimgp_ctx_t* r)
     uint32_t res=0;
 
     if(aimgp__chromosome_compute(def,c,r,&res))  continue;
-    success+=bits(dst^res);
+//logger("src %x want %x got %x",src,dst,res);
+    success+=bits(~(dst^res));
   }
 
   return success/(32.*r->runs);
@@ -186,9 +187,20 @@ int main(void)
 
   if(result)
   {
+    aimgp__fitness_t fit=fitness(aimgp,result,ctx);
     char* dump=aimgp__chromosome_dumps(aimgp,result);
-    logger("result: <%s>",dump);
+    logger("result: %g\n%s",fit,dump);
     md_free(dump);
+
+    aimgp_ctx_reset(ctx);
+    uint32_t src=rand()%0xffffffffU;
+    uint32_t dst=target(src);
+    ctx->regs[0]=src;
+    uint32_t res=0;
+
+    if(aimgp__chromosome_compute(aimgp,result,ctx,&res))  crash("something wrong here");
+    logger("pass %x want %x got %x common %x bits %d",src,dst,res,~(dst^res),bits(~(dst^res)));
+
     aimgp__chromosome_free(result);
   }
 
