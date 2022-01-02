@@ -49,10 +49,10 @@ llull options input_grammar output_folder
 %var REGISTER  0:15
 ...
 
-asm__binary_instruction: "\tADD " operand "," operand "\n" {* $$=$1+$2; *}
+asm__binary_instruction: "\tADD " operand "," operand "\n" %{ $$=$1+$2; %}
 | ...
 
-operand: "REG[" REGISTER "]" {* $$=register_content[$1]; *}
+operand: "REG[" REGISTER "]" %{ $$=register_content[$1]; %}
 | ...
 
 ```
@@ -65,12 +65,12 @@ operand: "REG[" REGISTER "]" {* $$=register_content[$1]; *}
 
 ### Raw code
 
-Raw C code enclosed in `{*` and `*}` brackets and included as is.
+Raw C code enclosed in `%{` and `%}` brackets and included as is.
 >Example:
 ```
-{*
+%{
 #include "context_definitions.h"
-*}
+%}
 ```
 
 ### Production rules
@@ -79,7 +79,7 @@ Raw C code enclosed in `{*` and `*}` brackets and included as is.
 
 `type_name` is a C type assotiated with given rule, all functions in `function_All` should return this type.
 `variant_definition` is a list of strings, rule names or variable names.
-`function_call` may be `{* raw C code *}` block or reference to externally defined function in form `@function_name`
+`function_call` may be `%{ raw C code %}` block or reference to externally defined function in form `@function_name`
 
 ### Resulting code structure
 
@@ -122,7 +122,7 @@ For functions returning `ssize_t` error marked as negative return
 ##### Single chromosome methods
 
 * `name__chromosome_t* name__chromosome_init0(const name_t*,size_t sz);` chromosome constructor, all positions are zeroed
-* `name__chromosome_t* name__chromosome_init(const name_t*,size_t sz);` chromosome constructor, filled by random data
+* `name__chromosome_t* name__chromosome_init(const name_t*,size_t sz, uint32_t (*rng)(void*), void* rng_ctx);` chromosome constructor, filled by random data. If rng==0 then use system `rand`.
 * `void name__chromosome_free(name__chromosome_t*);` chromosome destructor
 * `int name__chromosome_check(const name_t*,const name__chromosome_t*);` return 0 if chromosome may be successfully parsed, wrap_count should be>0
 * `char* name__chromosome_dumps(const name_t*,const name__chromosome_t*);` dump chromosome to string, returned string must be freed by caller

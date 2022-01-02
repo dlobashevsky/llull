@@ -1,0 +1,50 @@
+
+%name aimgp
+%init program
+%codon 32
+%fitness <float>
+
+// count of registers
+%var REGNO  8
+%var EPHEMERAL
+%var LENGTH 4:64
+
+%context <aimgp_ctx_t*>
+
+%{
+#include "../macros.h"
+#include "../process.h"
+#include "aimgp.h"
+
+%}
+
+%%
+
+  program <uint32_t> : instruction_list @runner
+;
+
+  instruction_list <int> : [LENGTH] instruction @sequence
+;
+
+  instruction <int>: 				"\tNOP\n" %{ $$=0; %}				// intron emulation
+  |						"\tLOAD R[" REGNO "]," EPHEMERAL "\n" @const
+  |						"\t" singleop " R[" REGNO "]\n" @sop
+  |						"\t" binop " R[" REGNO "],R[" REGNO "]\n" @bop
+;
+
+  singleop <op_t>:				"NEG"			%{ $$=OP_NEG; %}
+  |						"INV"			%{ $$=OP_INV; %}
+;
+
+  binop <op_t>:					"ADD"			%{ $$=OP_ADD; %}
+  |						"SUB"			%{ $$=OP_SUB; %}
+//  |						"MUL"			%{ $$=OP_MUL; %}
+//  |						"DIV"			%{ $$=OP_DIV; %}
+  |						"AND"			%{ $$=OP_AND; %}
+  |						"OR"			%{ $$=OP_OR; %}
+  |						"XOR"			%{ $$=OP_XOR; %}
+  |						"RSHIFT"		%{ $$=OP_RSHIFT; %}
+  |						"LSHIFT"		%{ $$=OP_LSHIFT; %}
+;
+
+%%

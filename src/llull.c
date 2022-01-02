@@ -183,7 +183,7 @@ int grammar_add_var(grammar_t* g,const char* name,intmax_t min,intmax_t max)
   r->name=md_strdup(name);
   r->min=min;
   r->max=max;
-  if(g->vars) r->order=g->vars->order+1;
+  r->order=g->vars_cnt++;
   HASH_ADD_KEYPTR(hh,g->vars,r->name,strlen(r->name),r);
   return 0;
 }

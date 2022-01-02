@@ -1,0 +1,27 @@
+
+%name sipreg
+%init packet
+%codon 32
+%fitness <int>
+
+%var HCHAR 0:256
+
+%context <sipreg_ctx_t*>
+
+
+%{
+#include "../macros.h"
+#include "../context.h"
+#include "sipreg.h"
+#include "strutils.h"
+
+%}
+
+%%
+
+  packet<char*>: firstline header "\r\n"			%{ $$=list_concat($1,$2) %}
+
+//  firstline: "REGISTER"
+// TODO
+
+%%

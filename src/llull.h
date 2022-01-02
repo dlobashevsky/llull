@@ -109,6 +109,7 @@ typedef struct grammar_t
   char* fitness;
 
   size_t rules_cnt;
+  size_t vars_cnt;
   grammar_string_t* code;
   grammar_var_hash_t* vars;
   grammar_rules_hash_t* rules;

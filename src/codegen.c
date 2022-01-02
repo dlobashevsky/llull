@@ -319,6 +319,27 @@ int grammar_codegen(grammar_t* g,const char* out,uint32_t flags)
   fprintf(fh,"\n\n#define %s__VARS\t%zu\n\ntypedef %s %s__codon_t;\ntypedef %s %s__fitness_t;\n\n",
              upper,total_vars,g->codon,g->name,g->fitness ?: "float",g->name);
 
+
+  if(total_vars)
+  {
+    fprintf(fh,"typedef enum aimgp__vars_t\n{\n");
+    for(grammar_var_hash_t* v=g->vars;v;v=v->hh.next)
+      fprintf(fh,"  %s__vars__%s=%zu,\n",g->name,v->name,v->order);
+
+    fprintf(fh,"} aimgp__vars_t;\n\n");
+  }
+
+
+  const char* final=0;
+  {
+    grammar_rules_hash_t* r=0;
+    HASH_FIND(hh,g->rules,g->init,strlen(g->init),r);
+    if(!r)
+      crash("init rule not found");
+    final=r->type;
+  }
+
+
   fprintf(fh,"struct %1$s__def_seq_t;\nstruct %1$s__def_rule_t;\n\ntypedef struct %1$s__chromosome_t\n{\n"
              "  size_t len;\n  %1$s__fitness_t fitness;\n  %1$s__codon_t data[0];\n} %1$s__chromosome_t;\n\n"
              "typedef struct %1$s__t\n{\n  const char* uuid;\n  const char* name;\n  size_t vars_count;\n  %1$s__codon_t* vars_min;\n"
@@ -335,7 +356,7 @@ int grammar_codegen(grammar_t* g,const char* out,uint32_t flags)
              "//!< return size of serializable data\nssize_t %1$s__chromosome_save_size(const %1$s__t*,const %1$s__chromosome_t*);\n"
              "//!< deserialize\n%1$s__chromosome_t* %1$s__chromosome_load(const %1$s__t*,FILE*);\n\n"
              "//! run chromosome computation, return value of root\n"
-             "int %1$s__chromosome_compute(const %1$s__t*,const %1$s__chromosome_t*,%2$s ctx,const char** res);\n"
+             "int %1$s__chromosome_compute(const %1$s__t*,const %1$s__chromosome_t*,%2$s ctx,%3$s* res);\n"
              "//! return sum of log(bit size) for MDL computation or parsimony pressure, -1 if error\n"
              "double %1$s__chromosome_bits(const %1$s__t*,const %1$s__chromosome_t*);\n\n"
              "//! mutate of single codon, validity not guaranteed\n"
@@ -356,7 +377,7 @@ int grammar_codegen(grammar_t* g,const char* out,uint32_t flags)
              "//! deserialize %1$s definition\n%1$s__t* %1$s__load(FILE*);\n\n"
              "//! get uuid\nconst char* %1$s__sys_uuid(void);\n"
              "//! get name\nconst char* %1$s__sys_name(void);\n\n",
-             g->name,g->context);
+             g->name,g->context,final);
 
   fclose(fh);
 
@@ -663,7 +684,7 @@ int grammar_codegen(grammar_t* g,const char* out,uint32_t flags)
       if(c->var)
       {
         fprintf(fc,"  intmax_t _a0=0;\n  if(%1$s__chromosome_varget(def,c,p,%2$zu,&_a0))  return -1;\n"
-                   "  _a0-=def->vars_min[%2$zu];\n  for(ssize_t i=0;i<_count;i++)\n  {\n",
+                   "  _a0-=def->vars_min[%2$zu];\n  for(ssize_t i=0;i<_a0;i++)\n  {\n",
                     g->name,c->varno);
 
         indent="  ";
@@ -710,7 +731,7 @@ int grammar_codegen(grammar_t* g,const char* out,uint32_t flags)
 
       if(c->var)
       {
-        fprintf(fc,"  intmax_t _a0=0;\n\n  if(%1$s__chromosome_varget(def,c,p,%2$zu,&_a0))  return -1;\n  _a0-=def->vars_min[%2$zu];\n\n",
+        fprintf(fc,"  intmax_t _a0=0;\n\n  if(%1$s__chromosome_varget(_def,_c,_p,%2$zu,&_a0))  return -1;\n  _a0-=_def->vars_min[%2$zu];\n\n",
                    g->name,c->varno);
 
         for(size_t i=0;i<c->args_count;i++)
@@ -786,18 +807,7 @@ int grammar_codegen(grammar_t* g,const char* out,uint32_t flags)
     off+=rules->cases->order+1;
   }
 
-
 // final section
-
-  const char* final=0;
-  {
-    grammar_rules_hash_t* r=0;
-    HASH_FIND(hh,g->rules,g->init,strlen(g->init),r);
-    if(!r)
-      crash("init rule not found");
-    final=r->type;
-  }
-
 
   fprintf(fc,
     "static int %1$s__chromosome_varcheck(const %1$s__t* def,const %1$s__chromosome_t* c,uint32_t* p)\n"

@@ -1,2 +1,3 @@
 
-External RNG object (STFMT, /dev/urandom, etc)
+Multiplier support
++ External RNG object (STFMT, /dev/urandom, etc)
