@@ -6,6 +6,14 @@
 
 %var HCHAR 0:256
 
+%var VMAJ 0:4
+%var VMIN 0:5
+
+%var IP1 0:256
+%var IP2 0:256
+%var IP3 0:256
+%var IP4 0:256
+
 %context <sipreg_ctx_t*>
 
 
@@ -13,15 +21,26 @@
 #include "../macros.h"
 #include "../context.h"
 #include "sipreg.h"
-#include "strutils.h"
 
 %}
 
 %%
 
-  packet<char*>: firstline header "\r\n"			%{ $$=list_concat($1,$2) %}
+packet<int>: method uri version headers "\r\n"		@dummy
+;
 
-//  firstline: "REGISTER"
-// TODO
+
+method<int>:	"REGISTER"					@dummy
+|		"register"					@dummy
+|		"rEgIsTeR"					@dummy
+;
+
+version<int>:	"SIP/" VMAJ "." VMIN				@dummy
+|		"sip/" VMAJ "." VMIN				@dummy
+|		"SiP/" VMAJ "." VMIN				@dummy
+|		"SIPp/" VMAJ "." VMIN				@dummy
+;
+
+uri<int>:	
 
 %%

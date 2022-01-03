@@ -15,7 +15,7 @@ LDFLAGS=-lm
 
 .PHONY: all clean
 
-all: $(DATA) $(PROG)
+all: $(PROG)
 
 $(GENERATED):  $(GESRC)
 	../../src/llull -d g.dump -o $(OUTPUT) -i $<

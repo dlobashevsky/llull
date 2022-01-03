@@ -57,12 +57,6 @@ operand: "REG[" REGISTER "]" %{ $$=register_content[$1]; %}
 
 ```
 
-* `%random <type>`
-> Random generator context type
-
-* `%pool`
-> Enable gene pooling by append single variant like `| "_nodename_pool[" index "]";` to every production rule. Array of pool may be filled by building blocks dynamically.
-
 ### Raw code
 
 Raw C code enclosed in `%{` and `%}` brackets and included as is.

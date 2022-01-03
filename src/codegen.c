@@ -322,13 +322,22 @@ int grammar_codegen(grammar_t* g,const char* out,uint32_t flags)
 
   if(total_vars)
   {
-    fprintf(fh,"typedef enum aimgp__vars_t\n{\n");
+    fprintf(fh,"typedef enum %s__vars_t\n{\n",g->name);
     for(grammar_var_hash_t* v=g->vars;v;v=v->hh.next)
       fprintf(fh,"  %s__vars__%s=%zu,\n",g->name,v->name,v->order);
 
-    fprintf(fh,"} aimgp__vars_t;\n\n");
+    fprintf(fh,"} %s__vars_t;\n\n",g->name);
   }
 
+  {
+    fprintf(fh,"typedef enum %s__nodes_t\n{\n",g->name);
+    size_t order=0;
+    for(grammar_rules_hash_t* rules=g->rules;rules;rules=rules->hh.next)
+    {
+      fprintf(fh,"  %s__nodes__%s=%zu,\t// node type <%s>\n",g->name,rules->name,order++,rules->type);
+    }
+    fprintf(fh,"} %s__nodes_t;\n\n",g->name);
+  }
 
   const char* final=0;
   {
