@@ -97,6 +97,10 @@ sub:		mult subrule TOKEN_AT TOKEN_ID		{ $$=grammar_case_init($1,$2,GRAMMAR_CASE_
 							   $$=grammar_case_init($1,$2,GRAMMAR_CASE_FLAG_CODE,$3);
 							   md_free($1);md_free($3);
 							}
+|		mult subrule				{
+							   $$=grammar_case_init($1,$2,GRAMMAR_CASE_FLAG_CODE,0);
+							   md_free($1);
+							}
 ;
 
 subrule:						{ $$ = 0;}

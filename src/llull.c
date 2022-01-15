@@ -225,7 +225,7 @@ int grammar_add_rule(grammar_t* g,const char* id,const char* type,grammar_case_t
 grammar_case_t* grammar_case_init(const char* mult,grammar_atom_t* list,uint32_t flag,const char* str)
 {
   grammar_case_t* r=md_new(r);
-  r->ref=md_strdup(str);
+  r->ref=str ? md_strdup(str) : 0;
   r->flags=flag;
   if(mult)
     r->var=md_strdup(mult);

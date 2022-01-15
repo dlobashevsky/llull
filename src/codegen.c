@@ -511,7 +511,7 @@ int grammar_codegen(grammar_t* g,const char* out,uint32_t flags)
 
   size_t i=0;
   for(grammar_var_hash_t* v=g->vars;v;v=v->hh.next,i++)
-    fprintf(fc,"  rv->vars_min[%1$zu]=%2$zu;\n  rv->vars_max[%1$zu]=%3$zu;\n"
+    fprintf(fc,"  rv->vars_min[%1$zu]=%2$ju;\n  rv->vars_max[%1$zu]=%3$ju;\n"
                "  if(rv->vars_max[%1$zu]!=rv->vars_min[%1$zu]) rv->vars_mdl[%1$zu]=log2(fabs(rv->vars_max[%1$zu]-rv->vars_min[%1$zu]));\n",
                v->order,v->min,v->max);
 

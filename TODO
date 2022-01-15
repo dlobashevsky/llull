@@ -1,3 +1,4 @@
 
-Multiplier support
++ Multiplier support
 + External RNG object (STFMT, /dev/urandom, etc)
+void/empty codeblock support
