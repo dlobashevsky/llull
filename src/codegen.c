@@ -572,7 +572,7 @@ int grammar_codegen(grammar_t* g,const char* out,uint32_t flags)
 
 
   fprintf(fc,"  if(!%1$s__chromosome_check(def,rv))  return rv;\n  %1$s__chromosome_free(rv);\n  return 0;\n}\n\n"
-             "static ssize_t getnext(const %1$s__chromosome_t* c,uint32_t* p,size_t wrap)\n"
+             "static intmax_t getnext(const %1$s__chromosome_t* c,uint32_t* p,size_t wrap)\n"
              "{\n  if(p[0]>=c->len*wrap)  return -1;\n\n  return c->data[(p[0]++)%%c->len];\n}\n\n",
              g->name);
 
@@ -582,7 +582,7 @@ int grammar_codegen(grammar_t* g,const char* out,uint32_t flags)
   for(grammar_rules_hash_t* rules=g->rules;rules;rules=rules->hh.next)
   {
     fprintf(fc,"static int %1$s__chromosome_check__%2$s(const %1$s__t* def,const %1$s__chromosome_t* c,uint32_t* p)\n"
-               "{\n  ssize_t n=getnext(c,p,def->wrap);\n  if(n<0) return -1;\n  return def->seq[%4$zu+(n%%%3$zu)].check(def,c,p);\n}\n\n",
+               "{\n  intmax_t n=getnext(c,p,def->wrap);\n  if(n<0) return -1;\n  return def->seq[%4$zu+(n%%%3$zu)].check(def,c,p);\n}\n\n",
                g->name,rules->name,rules->cases->order+1,off);
 
     for(grammar_case_t* c=rules->cases;c;c=c->next)
@@ -624,7 +624,7 @@ int grammar_codegen(grammar_t* g,const char* out,uint32_t flags)
   for(grammar_rules_hash_t* rules=g->rules;rules;rules=rules->hh.next)
   {
     fprintf(fc,"static double %1$s__chromosome_bits__%2$s(const %1$s__t* def,const %1$s__chromosome_t* c,uint32_t* p)\n"
-               "{\n  ssize_t n=getnext(c,p,def->wrap);\n  if(n<0) return -1;\n"
+               "{\n  intmax_t n=getnext(c,p,def->wrap);\n  if(n<0) return -1;\n"
                "  return def->rules[0].mdl+def->seq[%4$zu+(n%%%3$zu)].bits(def,c,p);\n}\n\n",
                g->name,rules->name,rules->cases->order+1,off);
 
@@ -680,7 +680,7 @@ int grammar_codegen(grammar_t* g,const char* out,uint32_t flags)
   for(grammar_rules_hash_t* rules=g->rules;rules;rules=rules->hh.next)
   {
     fprintf(fc,"static int %1$s__chromosome_dump__%2$s(const %1$s__t* def,const %1$s__chromosome_t* c,uint32_t* p,FILE *f)\n"
-               "{\n  ssize_t n=getnext(c,p,def->wrap);\n  if(n<0) return -1;\n"
+               "{\n  intmax_t n=getnext(c,p,def->wrap);\n  if(n<0) return -1;\n"
                "  return def->seq[%4$zu+(n%%%3$zu)].dump(def,c,p,f);\n}\n\n",
                g->name,rules->name,rules->cases->order+1,off);
 
@@ -727,7 +727,7 @@ int grammar_codegen(grammar_t* g,const char* out,uint32_t flags)
   for(grammar_rules_hash_t* rules=g->rules;rules;rules=rules->hh.next)
   {
     fprintf(fc,"static int %1$s__chromosome_val__%2$s(const %1$s__t* def,const %1$s__chromosome_t* c,%5$s ctx,uint32_t* p,%6$s* arg)\n"
-               "{\n  ssize_t n=getnext(c,p,def->wrap);\n  if(n<0) return -1;\n"
+               "{\n  intmax_t n=getnext(c,p,def->wrap);\n  if(n<0) return -1;\n"
                "  return def->seq[%4$zu+(n%%%3$zu)].func(def,c,ctx,p,arg);\n}\n\n",
                g->name,rules->name,rules->cases->order+1,off,g->context,rules->type);
 
@@ -822,13 +822,13 @@ int grammar_codegen(grammar_t* g,const char* out,uint32_t flags)
     "static int %1$s__chromosome_varcheck(const %1$s__t* def,const %1$s__chromosome_t* c,uint32_t* p)\n"
     "{\n  return getnext(c,p,def->wrap)<0 ? -1 : 0;\n}\n\n"
     "static int %1$s__chromosome_vardump(const %1$s__t* def,const %1$s__chromosome_t* c,uint32_t* p,size_t v,FILE* f)\n"
-    "{\n  ssize_t n=getnext(c,p,def->wrap);\n  if(n<0) return -1;\n  intmax_t min=def->vars_min[v];\n  intmax_t max=def->vars_max[v];\n"
+    "{\n  intmax_t n=getnext(c,p,def->wrap);\n  if(n<0) return -1;\n  intmax_t min=def->vars_min[v];\n  intmax_t max=def->vars_max[v];\n"
     "  fprintf(f,\"%%jd\",min==max ? min : min+n%%(max-min));\n  return 0;\n}\n\n"
     "static %1$s__codon_t %1$s__chromosome_varbits(const %1$s__t* def,const %1$s__chromosome_t* c,uint32_t* p,size_t v)\n"
-    "{\n  ssize_t n=getnext(c,p,def->wrap);\n  if(n<0) return -1;\n  intmax_t min=def->vars_min[v];\n  intmax_t max=def->vars_max[v];\n"
+    "{\n  intmax_t n=getnext(c,p,def->wrap);\n  if(n<0) return -1;\n  intmax_t min=def->vars_min[v];\n  intmax_t max=def->vars_max[v];\n"
     "  if(max==min)  return 0;\n  return log2(max-min);\n}\n\n"
     "static int %1$s__chromosome_varget(const %1$s__t* def,const %1$s__chromosome_t* c,uint32_t* p,size_t v,intmax_t* arg)\n"
-    "{\n  ssize_t n=getnext(c,p,def->wrap);\n  if(n<0) return -1;\n  intmax_t min=def->vars_min[v];\n  intmax_t max=def->vars_max[v];\n"
+    "{\n  intmax_t n=getnext(c,p,def->wrap);\n  if(n<0) return -1;\n  intmax_t min=def->vars_min[v];\n  intmax_t max=def->vars_max[v];\n"
     "  *arg=(min==max) ? min : (min+n%%(max-min));\n  return 0;\n}\n\n"
     "int %1$s__chromosome_compute(const %1$s__t* def,const %1$s__chromosome_t* c,struct %1$s_ctx_t* ctx,%3$s* ret)\n"
     "{\n  if(!def || !c || %1$s__chromosome_check(def,c))  return -1;\n  uint32_t p=0;\n"
